@@ -207,3 +207,345 @@ INSERT INTO `product_authentication` (`authentication_id`, `product_id`, `authen
 (5, 12, '2024-11-01 14:36:26', 'invalid', NULL, 3, 'asd'),
 (6, 13, '2024-11-01 14:36:33', 'valid', NULL, 3, 'asd'),
 (7, 14, '2024-11-01 15:27:31', 'valid', NULL, 3, 'werwerewr
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review`
+--
+
+CREATE TABLE `review` (
+  `review_id` int NOT NULL,
+  `customer_id` int DEFAULT NULL,
+  `product_id` int DEFAULT NULL,
+  `admin_id` int DEFAULT NULL,
+  `seller_id` int NOT NULL,
+  `rating` int DEFAULT NULL,
+  `comment` text,
+  `review_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ;
+
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`review_id`, `customer_id`, `product_id`, `admin_id`, `seller_id`, `rating`, `comment`, `review_date`) VALUES
+                                                                                                                                 (1, 1, 13, 1, 2, 4, 'very good product', '2024-09-15 09:21:21'),
+                                                                                                                                 (2, 1, 13, NULL, 2, 4, 'very good product', '2024-09-15 09:21:21'),
+                                                                                                                                 (3, 2, 13, NULL, 2, 1, 'Voluptatem nisi eve', '2024-09-15 07:52:33'),
+                                                                                                                                 (4, 2, 13, NULL, 2, 1, 'Quis et optio conse', '2024-09-15 07:52:53'),
+                                                                                                                                 (6, 3, 3, NULL, 2, 3, 'test test test test', '2024-09-15 10:30:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `seller`
+--
+
+CREATE TABLE `seller` (
+                          `seller_id` int NOT NULL,
+                          `admin_id` int DEFAULT NULL,
+                          `fullName` varchar(100) NOT NULL,
+                          `email` varchar(255) NOT NULL,
+                          `password` varchar(255) NOT NULL,
+                          `company_name` varchar(255) DEFAULT NULL,
+                          `company_phone` varchar(20) DEFAULT NULL,
+                          `company_address` text,
+                          `status` enum('blocked','unblocked') DEFAULT 'unblocked'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `seller`
+--
+
+INSERT INTO `seller` (`seller_id`, `admin_id`, `fullName`, `email`, `password`, `company_name`, `company_phone`, `company_address`, `status`) VALUES
+                                                                                                                                                  (1, NULL, 'Amery Conrad', 'joru@mailinator.com', '$2y$10$lT94DHjRDyeExXHZcQCtXerzN5OANlfuHUSCyL71kudif26p3Op8O', 'Mercer and Rhodes Co', '0545444444', 'Luna Holman Trading', 'blocked'),
+                                                                                                                                                  (2, NULL, 'Danah', 'sup@sup.com', '$2y$10$LaFjLMqGi52lGmzpIdwA8u.9JB.ZOiymksOWMBuD/DpJlmamZcGxi', 'Lewis Wall Traders', '0545444444', 'test company', 'unblocked'),
+                                                                                                                                                  (3, NULL, 'Sara Seller', 'sara@seller.com', '$2y$10$v3aZXFcj/uc3mXKCiQUKou7ceFBHzCKBGqlnpaMKJAHkTaBNvIbY.', NULL, NULL, NULL, 'blocked');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shipment_info`
+--
+
+CREATE TABLE `shipment_info` (
+                                 `shipment_id` int NOT NULL,
+                                 `customer_id` int NOT NULL,
+                                 `address` varchar(255) NOT NULL,
+                                 `city` varchar(100) NOT NULL,
+                                 `postal_code` varchar(20) NOT NULL,
+                                 `country` varchar(100) NOT NULL,
+                                 `phone` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `shipment_info`
+--
+
+INSERT INTO `shipment_info` (`shipment_id`, `customer_id`, `address`, `city`, `postal_code`, `country`, `phone`) VALUES
+    (5, 3, 'jubail', 'jubail', '3444', 'KSA', '0578787589');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+    ADD PRIMARY KEY (`admin_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `authenticators`
+--
+ALTER TABLE `authenticators`
+    ADD PRIMARY KEY (`authenticator_id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `id_number` (`id_number`),
+  ADD KEY `admin_id` (`admin_id`);
+
+--
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+    ADD PRIMARY KEY (`category_id`),
+  ADD KEY `admin_id` (`admin_id`);
+
+--
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+    ADD PRIMARY KEY (`customer_id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `admin_id` (`admin_id`);
+
+--
+-- Indexes for table `deal`
+--
+ALTER TABLE `deal`
+    ADD PRIMARY KEY (`deal_id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `admin_id` (`admin_id`),
+  ADD KEY `supplier_idFKKK4` (`seller_id`);
+
+--
+-- Indexes for table `deal_item`
+--
+ALTER TABLE `deal_item`
+    ADD PRIMARY KEY (`deal_item_id`),
+  ADD KEY `deal_id` (`deal_id`),
+  ADD KEY `product_id` (`product_id`);
+
+--
+-- Indexes for table `payment`
+--
+ALTER TABLE `payment`
+    ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `deal_id` (`deal_id`);
+
+--
+-- Indexes for table `product`
+--
+ALTER TABLE `product`
+    ADD PRIMARY KEY (`product_id`),
+  ADD KEY `supplier_id` (`seller_id`),
+  ADD KEY `category_id` (`category_id`);
+
+--
+-- Indexes for table `product_authentication`
+--
+ALTER TABLE `product_authentication`
+    ADD PRIMARY KEY (`authentication_id`),
+  ADD KEY `product_id` (`product_id`),
+  ADD KEY `admin_id` (`admin_id`),
+  ADD KEY `ASDasd` (`authenticator_id`);
+
+--
+-- Indexes for table `review`
+--
+ALTER TABLE `review`
+    ADD PRIMARY KEY (`review_id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `product_id` (`product_id`),
+  ADD KEY `admin_id` (`admin_id`),
+  ADD KEY `seller_idDSAD` (`seller_id`);
+
+--
+-- Indexes for table `seller`
+--
+ALTER TABLE `seller`
+    ADD PRIMARY KEY (`seller_id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `admin_id` (`admin_id`);
+
+--
+-- Indexes for table `shipment_info`
+--
+ALTER TABLE `shipment_info`
+    ADD PRIMARY KEY (`shipment_id`),
+  ADD KEY `fk_shipment_customer` (`customer_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `admin`
+--
+ALTER TABLE `admin`
+    MODIFY `admin_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `authenticators`
+--
+ALTER TABLE `authenticators`
+    MODIFY `authenticator_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+    MODIFY `category_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+    MODIFY `customer_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `deal`
+--
+ALTER TABLE `deal`
+    MODIFY `deal_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `deal_item`
+--
+ALTER TABLE `deal_item`
+    MODIFY `deal_item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `payment`
+    MODIFY `payment_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+    MODIFY `product_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `product_authentication`
+--
+ALTER TABLE `product_authentication`
+    MODIFY `authentication_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `review`
+--
+ALTER TABLE `review`
+    MODIFY `review_id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `seller`
+--
+ALTER TABLE `seller`
+    MODIFY `seller_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `shipment_info`
+--
+ALTER TABLE `shipment_info`
+    MODIFY `shipment_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `authenticators`
+--
+ALTER TABLE `authenticators`
+    ADD CONSTRAINT `authenticators_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `category`
+--
+ALTER TABLE `category`
+    ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `customer`
+--
+ALTER TABLE `customer`
+    ADD CONSTRAINT `customer_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `deal`
+--
+ALTER TABLE `deal`
+    ADD CONSTRAINT `deal_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  ADD CONSTRAINT `deal_ibfk_2` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`),
+  ADD CONSTRAINT `supplier_idFKKK4` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`seller_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `deal_item`
+--
+ALTER TABLE `deal_item`
+    ADD CONSTRAINT `deal_item_ibfk_1` FOREIGN KEY (`deal_id`) REFERENCES `deal` (`deal_id`),
+  ADD CONSTRAINT `deal_item_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);
+
+--
+-- Constraints for table `payment`
+--
+ALTER TABLE `payment`
+    ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`deal_id`) REFERENCES `deal` (`deal_id`);
+
+--
+-- Constraints for table `product`
+--
+ALTER TABLE `product`
+    ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`seller_id`),
+  ADD CONSTRAINT `product_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`);
+
+--
+-- Constraints for table `product_authentication`
+--
+ALTER TABLE `product_authentication`
+    ADD CONSTRAINT `ASDasd` FOREIGN KEY (`authenticator_id`) REFERENCES `authenticators` (`authenticator_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `product_authentication_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
+  ADD CONSTRAINT `product_authentication_ibfk_2` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `review`
+--
+ALTER TABLE `review`
+    ADD CONSTRAINT `review_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  ADD CONSTRAINT `review_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
+  ADD CONSTRAINT `review_ibfk_3` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`),
+  ADD CONSTRAINT `seller_idDSAD` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`seller_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `supplier_idFKK` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`seller_id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `seller`
+--
+ALTER TABLE `seller`
+    ADD CONSTRAINT `seller_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`admin_id`);
+
+--
+-- Constraints for table `shipment_info`
+--
+ALTER TABLE `shipment_info`
+    ADD CONSTRAINT `fk_shipment_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`),
+  ADD CONSTRAINT `shipment_info_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
